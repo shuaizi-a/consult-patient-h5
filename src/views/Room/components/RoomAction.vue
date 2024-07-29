@@ -1,23 +1,53 @@
 <template>
   <div class="room-action">
     <van-field
+      :disabled="disabled"
+      v-model="text"
       type="text"
       class="input"
       :border="false"
       placeholder="问医生"
       autocomplete="off"
-      :disabled="disabled"
+      @keyup.enter="sendText"
     ></van-field>
-    <van-uploader :preview-image="false" :disabled="disabled">
+    <van-uploader :preview-image="false" :disabled="disabled" :after-read="sendImage">
       <cp-icon name="consult-img" />
     </van-uploader>
   </div>
 </template>
 
 <script setup lang="ts">
+  import { uploadImage } from '@/services/consult';
+  import type { Image } from '@/types/consult';
+  import { showLoadingToast } from 'vant';
+  import type { UploaderAfterRead } from 'vant/lib/uploader/types';
+
   defineProps<{
     disabled: boolean;
   }>();
+
+  import { ref } from 'vue';
+
+  const emit = defineEmits<{
+    (e: 'send-text', text: string): void;
+    (e: 'send-image', img: Image): void;
+  }>();
+
+  const text = ref('');
+
+  const sendText = () => {
+    emit('send-text', text.value);
+    text.value = '';
+  };
+
+  const sendImage: UploaderAfterRead = async data => {
+    if (Array.isArray(data)) return;
+    if (!data.file) return;
+    const t = showLoadingToast({ message: '正在上传', duration: 0 });
+    const res = await uploadImage(data.file);
+    t.close();
+    emit('send-image', res.data);
+  };
 </script>
 
 <style lang="scss" scoped>

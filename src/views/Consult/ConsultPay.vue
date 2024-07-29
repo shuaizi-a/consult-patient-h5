@@ -34,30 +34,7 @@
       :loading="loading"
     />
 
-    <van-action-sheet
-      v-model:show="show"
-      title="选择支付方式"
-      :close-on-popstate="false"
-      :closeable="false"
-      :before-close="onClose"
-    >
-      <div class="pay-type">
-        <p class="amount">￥{{ payInfo.actualPayment.toFixed(2) }}</p>
-        <van-cell-group>
-          <van-cell title="微信支付" @click="paymentMethod = 0">
-            <template #icon><cp-icon name="consult-wechat" /></template>
-            <template #extra><van-checkbox :checked="paymentMethod === 0" /></template>
-          </van-cell>
-          <van-cell title="支付宝支付" @click="paymentMethod = 1">
-            <template #icon><cp-icon name="consult-alipay" /></template>
-            <template #extra><van-checkbox :checked="paymentMethod === 1" /></template>
-          </van-cell>
-        </van-cell-group>
-        <div class="btn">
-          <van-button type="primary" round block @click="pay">立即支付</van-button>
-        </div>
-      </div>
-    </van-action-sheet>
+    <cp-pay-sheet v-model:show="show" :order-id="orderId" :actualPayment="payInfo.actualPayment" :onClose="onClose" />
   </div>
 </template>
 
@@ -140,9 +117,6 @@
 
   onMounted(() => {
     const validKeys: Key[] = ['type', 'illnessType', 'depId', 'illnessDesc', 'illnessTime', 'consultFlag', 'patientId'];
-
-    console.log('测试数据', store.consult);
-
     const valid = validKeys.every(key => store.consult[key] !== undefined);
     if (!valid) {
       return showDialog({
@@ -157,18 +131,6 @@
     loadData();
     loadPatient();
   });
-
-  // 跳转支付
-  const pay = async () => {
-    if (paymentMethod.value === undefined) return showToast('请选择支付方式');
-    showLoadingToast({ message: '跳转支付', duration: 0 });
-    const res = await getConsultOrderPayUrl({
-      orderId: orderId.value,
-      paymentMethod: paymentMethod.value,
-      payCallback: 'http://localhost:5173/room'
-    });
-    window.location.href = res.data.payUrl;
-  };
 </script>
 
 <style lang="scss" scoped>

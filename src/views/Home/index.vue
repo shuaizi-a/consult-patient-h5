@@ -76,17 +76,25 @@
 
     <van-tabs shrink sticky v-model:active="active">
       <van-tab title="关注">
-        <follow-doctor></follow-doctor>
-        <knowledge-list type="like" />
+        <div style="min-height: 100vh">
+          <follow-doctor></follow-doctor>
+          <knowledge-list type="like" />
+        </div>
       </van-tab>
       <van-tab title="推荐">
-        <knowledge-list type="recommend" />
+        <div style="min-height: 100vh">
+          <knowledge-list type="recommend" />
+        </div>
       </van-tab>
       <van-tab title="减脂">
-        <knowledge-list type="fatReduction" />
+        <div style="min-height: 100vh">
+          <knowledge-list type="fatReduction" />
+        </div>
       </van-tab>
       <van-tab title="饮食">
-        <knowledge-list type="food" />
+        <div style="min-height: 100vh">
+          <knowledge-list type="food" />
+        </div>
       </van-tab>
     </van-tabs>
   </div>
