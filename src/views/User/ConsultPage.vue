@@ -1,7 +1,7 @@
 <template>
   <div class="consult-page">
     <cp-nav-bar title="问诊记录" />
-    <van-tabs sticky offset-top="46px">
+    <van-tabs sticky>
       <van-tab title="极速问诊">
         <consult-list :type="ConsultType.Fast" />
       </van-tab>

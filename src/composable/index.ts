@@ -1,4 +1,3 @@
-import { ref } from 'vue';
 import { followOrUnfollow } from '@/services/consult';
 import type { FollowType } from '@/types/consult';
 import { getPrescriptionPic } from '@/services/consult';
@@ -6,6 +5,9 @@ import { showImagePreview, showSuccessToast, showFailToast } from 'vant';
 import type { ConsultOrderItem } from '@/types/consult';
 import { cancelOrder, deleteOrder } from '@/services/consult';
 import { OrderType } from '@/enums';
+import { getMedicalOrderDetail } from '@/services/order';
+import type { OrderDetail } from '@/types/order';
+import { onMounted, ref } from 'vue';
 
 // 封装逻辑，规范 useXxx，表示使用某功能
 export const useFollow = (type: FollowType = 'doc') => {
@@ -70,4 +72,19 @@ export const useDeleteOrder = (cb: () => void) => {
     }
   };
   return { loading, deleteConsultOrder };
+};
+
+export const useOrderDetail = (id: string) => {
+  const loading = ref(false);
+  const order = ref<OrderDetail>();
+  onMounted(async () => {
+    loading.value = true;
+    try {
+      const res = await getMedicalOrderDetail(id);
+      order.value = res.data;
+    } finally {
+      loading.value = false;
+    }
+  });
+  return { order, loading };
 };
